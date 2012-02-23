@@ -1,4 +1,4 @@
-<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+<atlassian-plugin key="com.atlassian.labs.jira.markdown" name="${project.name}" plugins-version="2">
     <plugin-info>
         <description>${project.description}</description>
         <version>${project.version}</version>
@@ -20,12 +20,21 @@
         <resource type="velocity" name="css" location="css/markdown-edit.css"/>
     </jira-renderer>
 
+    <web-resource key="jira-markdown-plugin-pagedown" name="Page Down Edit JS/CSS">
+        <resource type="download" name="pagedown.css" location="css/pagedown/pagedown.css"/>
+        <resource type="download" name="Markdown.Converter.js" location="js/pagedown/Markdown.Converter.js"/>
+        <resource type="download" name="Markdown.Editor.js" location="js/pagedown/Markdown.Editor.js"/>
+        <resource type="download" name="Markdown.Sanitizer.js" location="js/pagedown/Markdown.Sanitizer.js"/>
+    </web-resource>
+
     <web-resource key="jira-markdown-plugin-edit" name="Atlassian JIRA Markdown Edit JS/CSS">
         <!-- needs to be global because quick create is global-->
         <context>jira.general</context>
 
-        <resource type="download" name="markdown-edit.css" location="css/markdown-edit.css"/>
-        <resource type="download" name="markdown-edit.js" location="js/markdown-edit.js"/>
+        <!--<dependency>com.atlassian.labs.jira.markdown:jira-markdown-plugin-pagedown</dependency>-->
+
+        <resource type="download" name="markdown-edit.css" location="css/markdown-edit-hashify.css"/>
+        <resource type="download" name="markdown-edit.js" location="js/markdown-edit-hashify.js"/>
     </web-resource>
 
     <web-resource key="jira-markdown-plugin-view" name="Atlassian JIRA Markdown View JS/CSS">
