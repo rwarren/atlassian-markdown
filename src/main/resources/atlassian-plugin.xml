@@ -20,21 +20,14 @@
         <resource type="velocity" name="css" location="css/markdown-edit.css"/>
     </jira-renderer>
 
-    <web-resource key="jira-markdown-plugin-pagedown" name="Page Down Edit JS/CSS">
-        <resource type="download" name="pagedown.css" location="css/pagedown/pagedown.css"/>
-        <resource type="download" name="Markdown.Converter.js" location="js/pagedown/Markdown.Converter.js"/>
-        <resource type="download" name="Markdown.Editor.js" location="js/pagedown/Markdown.Editor.js"/>
-        <resource type="download" name="Markdown.Sanitizer.js" location="js/pagedown/Markdown.Sanitizer.js"/>
-    </web-resource>
-
     <web-resource key="jira-markdown-plugin-edit" name="Atlassian JIRA Markdown Edit JS/CSS">
         <!-- needs to be global because quick create is global-->
         <context>jira.general</context>
 
-        <!--<dependency>com.atlassian.labs.jira.markdown:jira-markdown-plugin-pagedown</dependency>-->
-
-        <resource type="download" name="markdown-edit.css" location="css/markdown-edit-hashify.css"/>
-        <resource type="download" name="markdown-edit.js" location="js/markdown-edit-hashify.js"/>
+        <resource type="download" name="pagedown.css" location="css/pagedown/pagedown.css"/>
+        <resource type="download" name="Markdown.Converter.js" location="js/pagedown/Markdown.Converter.js"/>
+        <resource type="download" name="Markdown.Editor.js" location="js/pagedown/Markdown.Editor.js"/>
+        <resource type="download" name="Markdown.Sanitizer.js" location="js/pagedown/Markdown.Sanitizer.js"/>
     </web-resource>
 
     <web-resource key="jira-markdown-plugin-view" name="Atlassian JIRA Markdown View JS/CSS">
@@ -44,5 +37,6 @@
     </web-resource>
 
     <resource type="i18n" name="markdown-i18n" location="i18n/markdown-i18n"/>
+    <resource type="download" name="images/" location="images"/>
 
 </atlassian-plugin>
