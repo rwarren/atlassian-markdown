@@ -33,9 +33,15 @@
         </dependency>
 
         <dependency>
-          <groupId>org.markdownj</groupId>
-          <artifactId>markdownj</artifactId>
-          <version>0.3.0-1.0.2b4</version>
+            <groupId>org.markdownj</groupId>
+            <artifactId>markdownj</artifactId>
+            <version>0.3.0-1.0.2b4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.6.1</version>
         </dependency>
 
         <dependency>

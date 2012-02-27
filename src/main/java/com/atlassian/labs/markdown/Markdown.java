@@ -15,25 +15,28 @@ import java.util.regex.Pattern;
  */
 public class Markdown
 {
-    public String markdown(String text, IssueRenderContext issueRenderContext)
+    public String markdown(final String text, final IssueRenderContext issueRenderContext)
     {
-        MarkdownProcessor processor = new MarkdownProcessor();
-        String markdown = processor.markdown(text);
+        String markdown = new MarkdownProcessor().markdown(text);
         markdown = JiraKeyUtils.linkBugKeys(markdown);
+        markdown = MarkdownSanitizer.sanitizeHtml(markdown);
         markdown = replaceMentionsWithNames(markdown, issueRenderContext);
-        return new StringBuilder()
+
+        String markdownHTML = new StringBuilder()
                 .append("\n<div class=\"jira-markdown-field-view\">")
                 .append(markdown)
                 .append("\n</div>").toString();
+
+        return markdownHTML;
     }
 
     private static final Pattern USER_PROFILE_WIKI_MARKUP_LINK_PATTERN = Pattern.compile("(\\[[~@]*[^\\\\,]+?\\])");
 
     private String replaceMentionsWithNames(String content, IssueRenderContext issueRenderContext)
     {
-        Matcher wikiMatcher = USER_PROFILE_WIKI_MARKUP_LINK_PATTERN.matcher(content);
+        final Matcher wikiMatcher = USER_PROFILE_WIKI_MARKUP_LINK_PATTERN.matcher(content);
+        final StringBuffer sb = new StringBuffer();
         int cursor = 0;
-        StringBuffer sb = new StringBuffer();
         while (wikiMatcher.find())
         {
             sb.append(content.substring(cursor, wikiMatcher.start()));
@@ -57,8 +60,7 @@ public class Markdown
     {
         // in order to get full user profile link rendering we end up using the wiki render to turn [~xxxxx] into a user profile link
         // freaky eh?  wiki in markup inside wiki?
-        RendererManager jiraRendererManager = ComponentAccessor.getRendererManager();
-        String wikiLink = jiraRendererManager.getRendererForType(AtlassianWikiRenderer.RENDERER_TYPE).render(markup, issueRenderContext);
+        String wikiLink = ComponentAccessor.getRendererManager().getRendererForType(AtlassianWikiRenderer.RENDERER_TYPE).render(markup, issueRenderContext);
         sb.append(wikiLink);
     }
 }
