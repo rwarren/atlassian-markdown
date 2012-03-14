@@ -1,4 +1,23 @@
-Copyright (c) 2012 Atlassian. All rights reserved.
+
+ATLASSIAN MARKDOWN PLUGIN
+==========================
+
+This plugin that adds Markdown rendering to JIRA This has been released as open source. 
+
+This provides a full field renderer AND a {markdown} macro that can be placed inside exiisting wiki rendered fields. 
+
+The markdown is provided by a combination of JMarkdown and PageDown which is the code the StackOverFlow editor is based on. 
+
+JSoup is used under the covers to perform XSS whitelisting and Google Pretty is used to get code highlighting 
+
+Ideas for future improvements are
+ * Use GitHub Markdown (GMD) which is that much better for coders
+ * Unify the client side and server side markup generation
+ * Provide a Confluence plugin for the Markdown inclusion inside macros 
+
+
+-----------------
+Copyright (c) 2011 Atlassian. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
