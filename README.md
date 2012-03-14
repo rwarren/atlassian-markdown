@@ -10,7 +10,8 @@ The markdown is provided by a combination of JMarkdown and PageDown which is the
 
 JSoup is used under the covers to perform XSS whitelisting and Google Pretty is used to get code highlighting 
 
-Ideas for future improvements are
+Ideas for future improvements are :
+
  * Use GitHub Markdown (GMD) which is that much better for coders
  * Unify the client side and server side markup generation
  * Provide a Confluence plugin for the Markdown inclusion inside macros 
