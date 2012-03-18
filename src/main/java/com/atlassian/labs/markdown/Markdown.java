@@ -1,11 +1,9 @@
 package com.atlassian.labs.markdown;
 
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.issue.RendererManager;
 import com.atlassian.jira.issue.fields.renderer.IssueRenderContext;
 import com.atlassian.jira.issue.fields.renderer.wiki.AtlassianWikiRenderer;
 import com.atlassian.jira.util.JiraKeyUtils;
-import com.petebevin.markdown.MarkdownProcessor;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,9 +15,14 @@ public class Markdown
 {
     public String markdown(final String text, final IssueRenderContext issueRenderContext)
     {
-        String markdown = new MarkdownProcessor().markdown(text);
-        markdown = JiraKeyUtils.linkBugKeys(markdown);
+        // markdown4j invocation
+        //String markdown = new MarkdownProcessor().markdown(text);
+
+        // PageDown invocation
+        String markdown = new PageDownMarkdown().markdown(text);
         markdown = MarkdownSanitizer.sanitizeHtml(markdown);
+
+        markdown = JiraKeyUtils.linkBugKeys(markdown);
         markdown = replaceMentionsWithNames(markdown, issueRenderContext);
 
         String markdownHTML = new StringBuilder()
@@ -29,6 +32,7 @@ public class Markdown
 
         return markdownHTML;
     }
+
 
     private static final Pattern USER_PROFILE_WIKI_MARKUP_LINK_PATTERN = Pattern.compile("(\\[[~@]*[^\\\\,]+?\\])");
 

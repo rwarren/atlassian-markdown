@@ -6,9 +6,9 @@ This plugin that adds Markdown rendering to JIRA This has been released as open 
 
 This provides a full field renderer AND a {markdown} macro that can be placed inside exiisting wiki rendered fields. 
 
-The markdown is provided by a combination of JMarkdown and PageDown which is the code the StackOverFlow editor is based on. 
+The markdown is provided by a combination of Markdown4J and PageDown which is the code the StackOverFlow editor is based on.
 
-JSoup is used under the covers to perform XSS whitelisting and Google Pretty is used to get code highlighting 
+JSoup is used under the covers to perform XSS whitelisting
 
 Ideas for future improvements are :
 
