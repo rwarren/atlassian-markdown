@@ -39,4 +39,13 @@
     <resource type="i18n" name="markdown-i18n" location="i18n/markdown-i18n"/>
     <resource type="download" name="images/" location="images"/>
 
+    <webwork1 key="markdown-actions" class="java.lang.Object">
+        <actions>
+            <action name="com.atlassian.labs.markdown.MarkdownHelpAction" alias="MarkdownHelpAction">
+                <view name="success">/templates/markdown-help.vm</view>
+            </action>
+        </actions>
+    </webwork1>
+
+
 </atlassian-plugin>

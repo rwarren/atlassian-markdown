@@ -1,17 +1,7 @@
 package com.atlassian.labs.markdown;
 
-import javax.script.Bindings;
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import javax.script.SimpleBindings;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
+import javax.script.*;
+import java.io.*;
 import java.net.URL;
 
 /**
@@ -46,57 +36,14 @@ public class PageDownMarkdown
 
     private String getPageDownJS()
     {
-        StringWriter sw = new StringWriter();
+        final StringWriter sw = new StringWriter();
 
-        readResource(jsURL("js/pagedown/Markdown.Converter.js"), sw);
-        readResource(jsURL("js/pagedown/Markdown.Sanitizer.js"), sw);
+        new ResourceReader()
+                .readResource("js/pagedown/Markdown.Converter.js", sw)
+                .readResource("js/pagedown/Markdown.Sanitizer.js", sw);
 
         sw.append("\n   Markdown.getSanitizingConverter();");
         return sw.toString();
-    }
-
-    private URL jsURL(String name)
-    {
-        return Thread.currentThread().getContextClassLoader().getResource(name);
-    }
-
-    private void readResource(URL url, StringWriter sw)
-    {
-        BufferedReader reader = null;
-        try
-        {
-            InputStream is = url.openStream();
-            reader = new BufferedReader(new InputStreamReader(is));
-            String s;
-            while ((s = reader.readLine()) != null)
-            {
-                sw.write(s);
-                sw.append('\n');
-            }
-            sw.append('\n');
-        }
-        catch (IOException e)
-        {
-            throw runtimeAssertion(e);
-        }
-        finally
-        {
-            closeIt(reader);
-        }
-    }
-
-    private void closeIt(Reader reader)
-    {
-        try
-        {
-            if (reader != null)
-            {
-                reader.close();
-            }
-        }
-        catch (IOException ignored)
-        {
-        }
     }
 
     private RuntimeException runtimeAssertion(Exception e)
