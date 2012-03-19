@@ -18,6 +18,12 @@
     <description>This plugin for Atlassian JIRA adds Markdown support to JIRA.</description>
     <packaging>atlassian-plugin</packaging>
 
+    <scm>
+        <connection>scm:hg:ssh://hg@bitbucket.org/bbaker/atlassian-jira-markdown-plugin</connection>
+        <developerConnection>scm:hg:ssh://hg@bitbucket.org/bbaker/atlassian-jira-markdown-plugin</developerConnection>
+        <url>ssh://hg@bitbucket.org/bbaker/atlassian-jira-markdown-plugin</url>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>com.atlassian.jira</groupId>
