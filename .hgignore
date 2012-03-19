@@ -9,9 +9,13 @@ syntax: glob
 .idea/compiler.xml
 .idea/modules.xml
 .idea/misc.xml
-.idea/misc.xml
+.idea/vcs.xml
+.idea/.name
+.idea/encodings.xml
 .idea/workspace.xml
 .idea/uiDesigner.xml
 .idea/dictionaries/*
+.idea/scopes/*
+.idea/inspectionProfiles/*
 target/*
 hotspot.log
