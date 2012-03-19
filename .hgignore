@@ -1,0 +1,17 @@
+syntax: glob
+*~
+*.iml
+*.ipr
+*.iws
+.idea/libraries/*.xml
+.idea/copyright/*.xml
+.idea/ant.xml
+.idea/compiler.xml
+.idea/modules.xml
+.idea/misc.xml
+.idea/misc.xml
+.idea/workspace.xml
+.idea/uiDesigner.xml
+.idea/dictionaries/*
+target/*
+hotspot.log

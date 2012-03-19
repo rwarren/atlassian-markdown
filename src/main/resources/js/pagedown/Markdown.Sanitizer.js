@@ -1,11 +1,10 @@
-(function () {
+(function (window) { // bb added global window object
     var output, Converter;
     if (typeof exports === "object" && typeof require === "function") { // we're in a CommonJS (e.g. Node.js) module
         output = exports;
         Converter = require("./Markdown.Converter").Converter;
     } else {
-        //output = window.Markdown;
-        output = Markdown;
+        output = window.Markdown;
         Converter = output.Converter;
     }
         
@@ -106,4 +105,4 @@
         });
         return html;
     }
-})();
+})(this); // bb add global window object

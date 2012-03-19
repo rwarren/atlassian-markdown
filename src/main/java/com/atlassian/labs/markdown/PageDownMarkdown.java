@@ -51,7 +51,7 @@ public class PageDownMarkdown
         readResource(jsURL("js/pagedown/Markdown.Converter.js"), sw);
         readResource(jsURL("js/pagedown/Markdown.Sanitizer.js"), sw);
 
-        sw.append("\nMarkdown.getSanitizingConverter();");
+        sw.append("\n   Markdown.getSanitizingConverter();");
         return sw.toString();
     }
 
