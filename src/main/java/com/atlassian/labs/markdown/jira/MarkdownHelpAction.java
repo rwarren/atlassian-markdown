@@ -1,6 +1,8 @@
-package com.atlassian.labs.markdown;
+package com.atlassian.labs.markdown.jira;
 
 import com.atlassian.jira.web.action.JiraWebActionSupport;
+import com.atlassian.labs.markdown.PageDownMarkdown;
+import com.atlassian.labs.markdown.ResourceReader;
 
 import java.io.StringWriter;
 

@@ -1,9 +1,11 @@
-package com.atlassian.labs.markdown;
+package com.atlassian.labs.markdown.jira;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.fields.renderer.IssueRenderContext;
 import com.atlassian.jira.issue.fields.renderer.wiki.AtlassianWikiRenderer;
 import com.atlassian.jira.util.JiraKeyUtils;
+import com.atlassian.labs.markdown.MarkdownSanitizer;
+import com.atlassian.labs.markdown.PageDownMarkdown;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,13 +13,10 @@ import java.util.regex.Pattern;
 /**
  * The code to do the actual markdown generation
  */
-public class Markdown
+public class JiraMarkdownProcessor
 {
     public String markdown(final String text, final IssueRenderContext issueRenderContext)
     {
-        // markdown4j invocation
-        //String markdown = new MarkdownProcessor().markdown(text);
-
         // PageDown invocation
         String markdown = new PageDownMarkdown().markdown(text);
         markdown = MarkdownSanitizer.sanitizeHtml(markdown);

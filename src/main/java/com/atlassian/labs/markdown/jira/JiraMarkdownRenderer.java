@@ -1,13 +1,13 @@
-package com.atlassian.labs.markdown;
+package com.atlassian.labs.markdown.jira;
 
 import com.atlassian.jira.issue.fields.renderer.IssueRenderContext;
 import com.atlassian.jira.issue.fields.renderer.JiraRendererPlugin;
 import com.atlassian.jira.plugin.renderer.JiraRendererModuleDescriptor;
 
 /**
- * A markdown field renderer
+ * A JIRA markdown field renderer
  */
-public class MarkdownRenderer implements JiraRendererPlugin
+public class JiraMarkdownRenderer implements JiraRendererPlugin
 {
     public static final String RENDERER_TYPE = "atlassian-jira-markdown-renderer";
 
@@ -15,7 +15,7 @@ public class MarkdownRenderer implements JiraRendererPlugin
 
     public String render(String value, IssueRenderContext context)
     {
-        return new Markdown().markdown(value, context);
+        return new JiraMarkdownProcessor().markdown(value, context);
     }
 
     public String renderAsText(String value, IssueRenderContext context)
@@ -47,4 +47,5 @@ public class MarkdownRenderer implements JiraRendererPlugin
     {
         return jiraRendererModuleDescriptor;
     }
+
 }

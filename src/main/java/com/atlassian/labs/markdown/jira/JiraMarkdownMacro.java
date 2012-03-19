@@ -1,4 +1,4 @@
-package com.atlassian.labs.markdown;
+package com.atlassian.labs.markdown.jira;
 
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.fields.renderer.IssueRenderContext;
@@ -11,9 +11,9 @@ import com.atlassian.renderer.v2.macro.MacroException;
 import java.util.Map;
 
 /**
- * A wiki macro that can insert markdown text
+ * A JIRA wiki macro that can insert markdown text
  */
-public class MarkdownMacro extends BaseMacro
+public class JiraMarkdownMacro extends BaseMacro
 {
     public boolean isInline()
     {
@@ -32,7 +32,7 @@ public class MarkdownMacro extends BaseMacro
 
     public String execute(Map map, String body, RenderContext renderContext) throws MacroException
     {
-        return new Markdown().markdown(body, buildIssueRenderContext(renderContext));
+        return new JiraMarkdownProcessor().markdown(body, buildIssueRenderContext(renderContext));
     }
 
     private IssueRenderContext buildIssueRenderContext(RenderContext renderContext)

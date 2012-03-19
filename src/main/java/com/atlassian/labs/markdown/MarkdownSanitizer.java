@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  */
 public class MarkdownSanitizer
 {
-    static String sanitizeHtml(final String html)
+    public static String sanitizeHtml(final String html)
     {
         Whitelist whitelist = Whitelist.basicWithImages();
         String safeHtml = Jsoup.clean(html, whitelist);

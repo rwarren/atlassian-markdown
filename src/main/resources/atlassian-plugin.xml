@@ -6,14 +6,14 @@
     </plugin-info>
 
     <macro key="markdown" i18n-name-key="markdown.renderer.macro"
-           class="com.atlassian.labs.markdown.MarkdownMacro">
+           class="com.atlassian.labs.markdown.jira.JiraMarkdownMacro">
         <description>A wiki macro that can render markdown content</description>
     </macro>
 
     <jira-renderer key="atlassian-jira-markdown-renderer"
                    name="Markdown Renderer"
                    i18n-name-key="markdown.renderer"
-                   class="com.atlassian.labs.markdown.MarkdownRenderer">
+                   class="com.atlassian.labs.markdown.jira.JiraMarkdownRenderer">
         <description>A field renderer that will render markdown content</description>
         <resource type="velocity" name="edit" location="templates/markdown-edit.vm"/>
         <resource type="velocity" name="javascript" location="js/markdown-edit.js"/>
@@ -41,7 +41,7 @@
 
     <webwork1 key="markdown-actions" class="java.lang.Object">
         <actions>
-            <action name="com.atlassian.labs.markdown.MarkdownHelpAction" alias="MarkdownHelpAction">
+            <action name="com.atlassian.labs.markdown.jira.MarkdownHelpAction" alias="MarkdownHelpAction">
                 <view name="success">/templates/markdown-help.vm</view>
             </action>
         </actions>
