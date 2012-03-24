@@ -6,7 +6,7 @@
     </plugin-info>
 
     <macro key="markdown" i18n-name-key="markdown.renderer.macro"
-           class="com.atlassian.labs.markdown.jira.JiraMarkdownMacro">
+           class="com.atlassian.labs.markdown.confluence.ConfluenceMarkdownMacro">
         <description>A wiki macro that can render markdown content</description>
     </macro>
 
