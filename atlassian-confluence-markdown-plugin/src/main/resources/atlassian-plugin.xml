@@ -5,13 +5,19 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
     </plugin-info>
 
-    <resource type="i18n" name="i18n" location="com.atlassian.labs.markdown.confluence.i18n" />
+    <resource type="i18n" name="i18n" location="com.atlassian.labs.markdown.confluence.i18n"/>
 
     <resource type="download" name="images/" location="images"/>
 
     <resource key="icons" name="icons/" type="download" location="/icons"/>
 
-    <macro key="atlassian.markdown.macro" name="markdown"
+
+    <resource type="download" name="markdown.png" location="icons/markdown.png">
+        <param name="content-type" value="image/png"/>
+    </resource>
+
+    <macro key="atlassian.markdown.macro"
+           name="markdown"
            class="com.atlassian.labs.markdown.confluence.ConfluenceMarkdownMacro">
 
         <description>This macro allows Markdown inside Confluence</description>
@@ -27,10 +33,13 @@
         <parameters/>
     </macro>
 
-    <xhtml-macro key="atlassian.markdown.macro.xhtml" name="markdown-xhtml" documentation-url="help.markdown.macro"
-           class="com.atlassian.labs.markdown.confluence.ConfluenceMarkdownXhtmlMacro">
+    <xhtml-macro key="atlassian.markdown.macro.xhtml"
+                 name="markdown-xhtml"
+                 documentation-url="help.markdown.macro"
+                 icon="/download/resources/com.atlassian.labs.markdown.confluence/markdown.png"
+                 class="com.atlassian.labs.markdown.confluence.ConfluenceMarkdownXhtmlMacro">
 
-        <description>This macro allows Markdown inside Confluence</description>
+        <description>Allows the use of Markdown within a Confluence page.</description>
 
         <!-- Provides help text for the Confluence notation guide. -->
         <resource type="velocity" name="help" location="templates/markdown-macro-help.vm">
@@ -42,9 +51,6 @@
 
         <parameters/>
     </xhtml-macro>
-
-
-
 
 
 </atlassian-plugin>
