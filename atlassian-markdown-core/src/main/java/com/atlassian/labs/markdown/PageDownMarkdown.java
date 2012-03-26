@@ -39,8 +39,8 @@ public class PageDownMarkdown
         final StringWriter sw = new StringWriter();
 
         new ResourceReader()
-                .readResource("js/pagedown/Markdown.Converter.js", sw)
-                .readResource("js/pagedown/Markdown.Sanitizer.js", sw);
+                .readResource("pagedown/js/Markdown.Converter.js", sw)
+                .readResource("pagedown/js/Markdown.Sanitizer.js", sw);
 
         sw.append("\n   Markdown.getSanitizingConverter();");
         return sw.toString();

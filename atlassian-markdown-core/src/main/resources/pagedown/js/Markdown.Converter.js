@@ -948,7 +948,7 @@ else
                     codeblock = codeblock.replace(/^\n+/g, ""); // trim leading newlines
                     codeblock = codeblock.replace(/\n+$/g, ""); // trim trailing whitespace
 
-                    codeblock = "<pre><code>" + codeblock + "\n</code></pre>";
+                    codeblock = '<pre class="prettyprint"><code>' + codeblock + '\n</code></pre>';
 
                     return "\n\n" + codeblock + "\n\n" + nextChar;
                 }
@@ -1011,7 +1011,7 @@ else
                     c = c.replace(/[ \t]*$/g, ""); // trailing whitespace
                     c = _EncodeCode(c);
                     c = c.replace(/:\/\//g, "~P"); // to prevent auto-linking. Not necessary in code *blocks*, but in code spans. Will be converted back after the auto-linker runs.
-                    return m1 + "<code>" + c + "</code>";
+                    return m1 + "<code code='prettyprint'>" + c + "</code>";
                 }
             );
 

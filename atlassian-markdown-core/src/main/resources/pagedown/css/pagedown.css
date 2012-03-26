@@ -31,7 +31,11 @@ body
     display: none;
     clear: left;
     margin: 0 0 0 0;
+}
 
+.wmd-preview-container.selected {
+
+    display: block;
     background-color: #E8F1FF;
     border: 1px solid gray;
     -moz-box-sizing: border-box;
@@ -48,29 +52,6 @@ body
     padding: 0 10px;
 }
 
-.wmd-preview-button {
-    width: 16px;
-    height: 16px;
-    border: none;
-    background-color: transparent;
-    display: block;
-    float: left;
-    text-indent: -9999px;
-    cursor: pointer;
-    margin-right: 5px;
-    overflow: hidden;
-}
-
-.wmd-preview-button.fullscreen {
-    background: url("../../../images/icons/ico_preview.png") center no-repeat;
-}
-
-.wmd-preview-button.fullscreen.selected {
-background: url("../../../images/icons/ico_preview_selected.png") center no-repeat;
-}
-.wmd-preview-button.help-icon {
-    background: url("../../../images/icons/ico_help.png") center no-repeat;
-}
 
 .wmd-button-row 
 {
@@ -107,7 +88,7 @@ background: url("../../../images/icons/ico_preview_selected.png") center no-repe
 }
 
 .wmd-button > span {
-    background-image: url(images/pagedown/wmd-buttons.png);
+    background-image: url(pagedown/images/wmd-buttons.png);
     background-repeat: no-repeat;
     background-position: 0px 0px;
     width: 20px;
@@ -127,9 +108,6 @@ background: url("../../../images/icons/ico_preview_selected.png") center no-repe
 {
     left: 300px;
 }
-
-
-
 
 .wmd-prompt-background
 {

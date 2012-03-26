@@ -6,6 +6,8 @@ import com.atlassian.jira.issue.fields.renderer.wiki.AtlassianWikiRenderer;
 import com.atlassian.jira.util.JiraKeyUtils;
 import com.atlassian.labs.markdown.MarkdownSanitizer;
 import com.atlassian.labs.markdown.PageDownMarkdown;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,16 +22,22 @@ public class JiraMarkdownProcessor
         // PageDown invocation
         String markdown = new PageDownMarkdown().markdown(text);
         markdown = MarkdownSanitizer.sanitizeHtml(markdown);
+        
+        markdown = prettify(markdown);
 
         markdown = JiraKeyUtils.linkBugKeys(markdown);
         markdown = replaceMentionsWithNames(markdown, issueRenderContext);
 
-        String markdownHTML = new StringBuilder()
-                .append("\n<div class=\"jira-markdown-field-view\">")
-                .append(markdown)
-                .append("\n</div>").toString();
+        return markdown;
+    }
 
-        return markdownHTML;
+    private String prettify(String markdown)
+    {
+        Document doc = Jsoup.parseBodyFragment(markdown, "");
+        doc.select("pre").attr("class","prettyprint");
+//        doc.select("pre code").attr("class","language-java");
+        return doc.body().html();
+        
     }
 
 
