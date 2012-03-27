@@ -113,6 +113,8 @@ else
         pluginHooks.addFalse("generateImageHTML"); // called to generate images
         pluginHooks.addFalse("generateLinkHTML"); // called to generate links
         pluginHooks.addFalse("generatePlainLinkHTML"); // called to generate plain links
+        pluginHooks.addFalse("generateCodeBlockHTML"); // called to generate pre code blocks
+        pluginHooks.addFalse("generateCodeSpanHTML"); // called to generate code blocks
         //
         // Private state of the converter instance:
         //
@@ -986,9 +988,14 @@ else
                     codeblock = codeblock.replace(/^\n+/g, ""); // trim leading newlines
                     codeblock = codeblock.replace(/\n+$/g, ""); // trim trailing whitespace
 
-                    codeblock = '<pre class="prettyprint"><code>' + codeblock + '\n</code></pre>';
+                    var result = pluginHooks.generateCodeBlockHTML({
+                        codeblock : codeblock
+                    });
+                    if (! result) {
+                        result = '<pre><code>' + codeblock + '\n</code></pre>';
+                    }
 
-                    return "\n\n" + codeblock + "\n\n" + nextChar;
+                    return "\n\n" + result + "\n\n" + nextChar;
                 }
             );
 
@@ -1049,7 +1056,15 @@ else
                     c = c.replace(/[ \t]*$/g, ""); // trailing whitespace
                     c = _EncodeCode(c);
                     c = c.replace(/:\/\//g, "~P"); // to prevent auto-linking. Not necessary in code *blocks*, but in code spans. Will be converted back after the auto-linker runs.
-                    return m1 + "<code code='prettyprint'>" + c + "</code>";
+
+                    var result = pluginHooks.generateCodeSpanHTML({
+                        codespan : c
+                    });
+                    if (! result) {
+                        result = '<code>' + c + '</code>';
+                    }
+
+                    return m1 + result;
                 }
             );
 

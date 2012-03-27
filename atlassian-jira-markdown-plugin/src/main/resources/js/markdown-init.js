@@ -16,7 +16,7 @@
             }
             var idPostfix = wmdinput.attr('data-id-postfix');
 
-            var converter = Markdown.getSanitizingConverter();
+            var converter = Markdown.getSharedSecretConverter();
             var showHelp = function () {
                 window.open(contextPath + '/MarkdownHelpAction.jspa', 'markdown_renderer_notation_help', 'width=780, height=800, resizable, scrollbars=yes');
             };
@@ -26,7 +26,6 @@
             editor.run();
 
             // turn on preview buttons
-            console.log($("#wmd-preview-button-" + idPostfix))
             $("#wmd-preview-button-" + idPostfix).bind('click', function (event) {
                 event.preventDefault();
                 $(this).toggleClass('selected');
@@ -37,6 +36,8 @@
                 event.preventDefault();
                 showHelp();
             });
+
+            prettyPrint();
 
         });
     };

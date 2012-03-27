@@ -73,7 +73,7 @@
     </build>
 
     <properties>
-        <jira.version>5.0</jira.version>
+        <jira.version>4.4</jira.version>
         <amps.version>3.7.2</amps.version>
     </properties>
 

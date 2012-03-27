@@ -1,22 +1,39 @@
-(function (window) { // bb added global window object
+(function ()
+{ // bb added global window object
     var output, Converter;
-    if (typeof exports === "object" && typeof require === "function") { // we're in a CommonJS (e.g. Node.js) module
+    if (typeof exports === "object" && typeof require === "function")
+    { // we're in a CommonJS (e.g. Node.js) module
         output = exports;
         Converter = require("./Markdown.Converter").Converter;
-    } else {
-        output = window.Markdown;
+    } else
+    {
+        output = Markdown;
         Converter = output.Converter;
     }
-        
-    output.getSanitizingConverter = function () {
+
+    //
+    // BB add support for a shared secret that allows tags to pass through without change IF they contain the shared secret as a data attribute
+    // Since the shared secret is a time stamp + random number and cant be pre-guess easily then its perfect as a shared secret to allow tags that
+    // don't conform to the regex specs below
+    //
+    output.getSanitizingConverter = function (sharedSecret)
+    {
         var converter = new Converter();
-        converter.hooks.chain("postConversion", sanitizeHtml);
+
+        converter.hooks.chain("postConversion", function (html)
+        {
+            return sanitizeHtml(html, sharedSecret);
+        });
         converter.hooks.chain("postConversion", balanceTags);
         return converter;
     }
 
-    function sanitizeHtml(html) {
-        return html.replace(/<[^>]*>?/gi, sanitizeTag);
+    function sanitizeHtml(html, sharedSecret)
+    {
+        return html.replace(/<[^>]*>?/gi, function (tag)
+        {
+            return sanitizeTag(tag, sharedSecret);
+        });
     }
 
     // (tags that can be opened/closed) | (tags that stand alone)
@@ -31,22 +48,35 @@
     // <img src="url..." optional width  optional height  optional alt  optional title
     var img_white = /^(<img\ssrc="(https?:\/\/|\/)[-A-Za-z0-9+&@#\/%?=~_|!:,.;\(\)]+"(\swidth="\d{1,3}")?(\sheight="\d{1,3}")?(\salt="[^"<>]*")?(\stitle="[^"<>]*")?(\sclass="[^"<>]*")?\s?\/?>)$/i;
 
-    function sanitizeTag(tag) {
+    function sanitizeTag(tag, sharedSecret)
+    {
         if (tag.match(basic_tag_whitelist) || tag.match(a_white) || tag.match(img_white))
+        {
             return tag;
-        else
+        } else
+        {
+            if (sharedSecret)
+            {
+                var searchString = 'data-shared-secret="' + sharedSecret + '"';
+                if (tag.indexOf(searchString) != -1)
+                {
+                    return tag.replace(searchString, "");
+                }
+            }
             return "";
+        }
     }
 
     /// <summary>
     /// attempt to balance HTML tags in the html string
     /// by removing any unmatched opening or closing tags
-    /// IMPORTANT: we *assume* HTML has *already* been 
+    /// IMPORTANT: we *assume* HTML has *already* been
     /// sanitized and is safe/sane before balancing!
-    /// 
+    ///
     /// adapted from CODESNIPPET: A8591DBA-D1D3-11DE-947C-BA5556D89593
     /// </summary>
-    function balanceTags(html) {
+    function balanceTags(html)
+    {
 
         if (html == "")
             return "";
@@ -69,7 +99,8 @@
         var needsRemoval = false;
 
         // loop through matched tags in forward order
-        for (var ctag = 0; ctag < tagcount; ctag++) {
+        for (var ctag = 0; ctag < tagcount; ctag++)
+        {
             tagname = tags[ctag].replace(/<\/?(\w+).*/, "$1");
             // skip any already paired tags
             // and skip tags in our ignore list; assume they're self-closed
@@ -79,11 +110,14 @@
             tag = tags[ctag];
             match = -1;
 
-            if (!/^<\//.test(tag)) {
+            if (!/^<\//.test(tag))
+            {
                 // this is an opening tag
                 // search forwards (next tags), look for closing tags
-                for (var ntag = ctag + 1; ntag < tagcount; ntag++) {
-                    if (!tagpaired[ntag] && tags[ntag] == "</" + tagname + ">") {
+                for (var ntag = ctag + 1; ntag < tagcount; ntag++)
+                {
+                    if (!tagpaired[ntag] && tags[ntag] == "</" + tagname + ">")
+                    {
                         match = ntag;
                         break;
                     }
@@ -102,11 +136,12 @@
         // delete all orphaned tags from the string
 
         var ctag = 0;
-        html = html.replace(re, function (match) {
+        html = html.replace(re, function (match)
+        {
             var res = tagremove[ctag] ? "" : match;
             ctag++;
             return res;
         });
         return html;
     }
-})(this); // bb add global window object
+})();

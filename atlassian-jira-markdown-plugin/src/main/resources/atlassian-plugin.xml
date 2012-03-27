@@ -27,6 +27,7 @@
         <resource type="download" name="Markdown.Converter.js" location="pagedown/js/Markdown.Converter.js"/>
         <resource type="download" name="Markdown.Editor.js" location="pagedown/js/Markdown.Editor.js"/>
         <resource type="download" name="Markdown.Sanitizer.js" location="pagedown/js/Markdown.Sanitizer.js"/>
+        <resource type="download" name="Markdown.SharedSecret.js" location="pagedown/js/Markdown.SharedSecret.js"/>
 
 
         <resource type="download" name="google-prettify.css" location="googleprettify/css/prettify.css"/>

@@ -1,21 +1,25 @@
-    <html>
+<html>
 <head>
-    <script type="text/javascript" src="../../../../../../../src/main/resources/pagedown/js/Markdown.Converter.js"></script>
-    <script type="text/javascript" src="../../../../../../../src/main/resources/pagedown/js/Markdown.Sanitizer.js"></script>
+    <script type="text/javascript"
+            src="../../../../../../../src/main/resources/pagedown/js/Markdown.Converter.js"></script>
+    <script type="text/javascript"
+            src="../../../../../../../src/main/resources/pagedown/js/Markdown.Sanitizer.js"></script>
+    <script type="text/javascript"
+            src="../../../../../../../src/main/resources/pagedown/js/Markdown.SharedSecret.js"></script>
 
     <script>
-        convertFunc = function() {
+        // Testing in a browser gives us a debugger so we can work out whats going on?
+        convertFunc = function ()
+        {
 
-            converter = Markdown.getSanitizingConverter();
-
-
+            converter = Markdown.getSharedSecretConverter();
 
             var markdownText = document.getElementById('markdownText');
             var testarea = document.getElementById('testarea');
 
             testarea.innerHTML = converter.makeHtml(markdownText.value);
         }
-        
+
     </script>
 </head>
 <body onload="convertFunc()">
@@ -29,6 +33,17 @@ And this comes to the second level
 
 Here
 ----
+
+        public String markdown(final String text, final IssueRenderContext issueRenderContext)
+        {
+            // PageDown invocation
+            String markdown = new PageDownMarkdown().markdown(text);
+
+            markdown = JiraKeyUtils.linkBugKeys(markdown);
+            markdown = replaceMentionsWithNames(markdown, issueRenderContext);
+
+            return markdown;
+        }
 
 and then some images like ![Alt text](http://images.wikia.com/disney/images/0/00/Captain_Hook.png)
 
@@ -44,8 +59,7 @@ And then there is a [link like this][1] that has used reference notation
     </textarea>
     <button onclick="convertFunc()">Convert</button>
     <div id="testarea">
-        
     </div>
-    
+
 </body>
 </html>

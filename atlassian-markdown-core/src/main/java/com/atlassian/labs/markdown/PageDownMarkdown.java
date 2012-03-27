@@ -2,7 +2,6 @@ package com.atlassian.labs.markdown;
 
 import javax.script.*;
 import java.io.*;
-import java.net.URL;
 
 /**
  * This markdown generation code uses a JavaScript engine to invoke the same PageDown JS.
@@ -41,14 +40,14 @@ public class PageDownMarkdown
         new ResourceReader()
                 .readResource("pagedown/js/Markdown.Converter.js", sw)
                 .readResource("pagedown/js/Markdown.Sanitizer.js", sw)
-                .readResource("pagedown/js/Markdown.Invoker.js", sw);
+                .readResource("pagedown/js/Markdown.SharedSecret.js", sw);
 
         return sw.toString();
     }
 
     private RuntimeException runtimeAssertion(Exception e)
     {
-        return new RuntimeException("This is really not expected and indicates something seriously wrong with this code", e);
+        return new RuntimeException("This is really not expected and indicates something seriously wrong with the PageDown JavaScript code", e);
     }
 
 
