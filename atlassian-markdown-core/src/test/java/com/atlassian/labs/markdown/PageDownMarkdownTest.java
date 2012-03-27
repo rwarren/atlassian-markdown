@@ -16,7 +16,10 @@ public class PageDownMarkdownTest
                 "====================\n" +
                 "\n" +
                 "A Second Level Header\n" +
-                "---------------------";
+                "---------------------\n" +
+                "\n\n" +
+                "![Alt text](/path/to/img.jpg)";
+
         String markdown = new PageDownMarkdown().markdown(text);
         assertNotNull(markdown);
         Assert.assertTrue(markdown.contains("<h1>A First Level Header</h1>"));

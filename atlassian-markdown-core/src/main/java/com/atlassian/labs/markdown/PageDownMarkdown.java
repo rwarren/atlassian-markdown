@@ -40,9 +40,9 @@ public class PageDownMarkdown
 
         new ResourceReader()
                 .readResource("pagedown/js/Markdown.Converter.js", sw)
-                .readResource("pagedown/js/Markdown.Sanitizer.js", sw);
+                .readResource("pagedown/js/Markdown.Sanitizer.js", sw)
+                .readResource("pagedown/js/Markdown.Invoker.js", sw);
 
-        sw.append("\n   Markdown.getSanitizingConverter();");
         return sw.toString();
     }
 

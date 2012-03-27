@@ -108,6 +108,12 @@ else
         pluginHooks.addNoop("postConversion"); // called with the final cooked HTML code. The result of this plugin hook is the actual output of makeHtml
 
         //
+        // BB changes - added new hooks for html generation overrrides
+        //
+        pluginHooks.addFalse("generateImageHTML"); // called to generate images
+        pluginHooks.addFalse("generateLinkHTML"); // called to generate links
+        pluginHooks.addFalse("generatePlainLinkHTML"); // called to generate plain links
+        //
         // Private state of the converter instance:
         //
 
@@ -585,15 +591,33 @@ else
             }
             url = encodeProblemUrlChars(url);
             url = escapeCharacters(url, "*_");
-            var result = "<a href=\"" + url + "\"";
 
             if (title != "") {
                 title = attributeEncode(title);
                 title = escapeCharacters(title, "*_");
-                result += " title=\"" + title + "\"";
             }
 
-            result += ">" + link_text + "</a>";
+            //
+            // BB inserted HTML generation hook
+            //
+            var result = pluginHooks.generateLinkHTML(
+                {
+                    url : url,
+                    link_text : link_text,
+                    link_id : link_id,
+                    title : title
+                });
+
+            if (! result) {
+
+                result = "<a href=\"" + url + "\"";
+
+                if (title != "") {
+                    result += " title=\"" + title + "\"";
+                }
+
+                result += ">" + link_text + "</a>";
+            }
 
             return result;
         }
@@ -692,19 +716,33 @@ else
             
             alt_text = escapeCharacters(attributeEncode(alt_text), "*_[]()");
             url = escapeCharacters(url, "*_");
-            var result = "<img src=\"" + url + "\" alt=\"" + alt_text + "\"";
 
-            // attacklab: Markdown.pl adds empty title attributes to images.
-            // Replicate this bug.
-
-            //if (title != "") {
             title = attributeEncode(title);
             title = escapeCharacters(title, "*_");
-            result += " title=\"" + title + "\"";
-            //}
 
-            result += " />";
+            //
+            // BB added html generation hook
+            //
+            var result = pluginHooks.generateImageHTML(
+                {
+                    url : url,
+                    alt_text : alt_text,
+                    title : title
+                });
 
+            // if the generate html hook didnt do anything then default it
+            if (! result) {
+                result = "<img src=\"" + url + "\" alt=\"" + alt_text + "\"";
+
+                // attacklab: Markdown.pl adds empty title attributes to images.
+                // Replicate this bug.
+
+                //if (title != "") {
+                result += " title=\"" + title + "\"";
+                //}
+
+                result += " />";
+            }
             return result;
         }
 
@@ -1206,7 +1244,21 @@ else
 
             //  autolink anything like <http://example.com>
             
-            var replacer = function (wholematch, m1) { return "<a href=\"" + m1 + "\">" + pluginHooks.plainLinkText(m1) + "</a>"; }
+            var replacer = function (wholematch, m1) {
+                var plainLinkText = pluginHooks.plainLinkText(m1);
+                //
+                // BB add HTML generation hook
+                //
+                var result = pluginHooks.generatePlainLinkHTML(
+                    {
+                        url : m1,
+                        plainLinkText : plainLinkText
+                    });
+                if (! result) {
+                    result =  "<a href=\"" + m1 + "\">" + plainLinkText + "</a>";
+                }
+                return result;
+            };
             text = text.replace(/<((https?|ftp):[^'">\s]+)>/gi, replacer);
 
             // Email addresses: <address@domain.foo>

@@ -1,0 +1,51 @@
+    <html>
+<head>
+    <script type="text/javascript" src="../../../../../../../src/main/resources/pagedown/js/Markdown.Converter.js"></script>
+    <script type="text/javascript" src="../../../../../../../src/main/resources/pagedown/js/Markdown.Sanitizer.js"></script>
+
+    <script>
+        convertFunc = function() {
+
+            converter = Markdown.getSanitizingConverter();
+
+
+
+            var markdownText = document.getElementById('markdownText');
+            var testarea = document.getElementById('testarea');
+
+            testarea.innerHTML = converter.makeHtml(markdownText.value);
+        }
+        
+    </script>
+</head>
+<body onload="convertFunc()">
+    <p>Testing Markdown library</p>
+    <textarea id="markdownText" rows="15" cols="200">
+A First Level Header
+====================
+
+
+And this comes to the second level
+
+Here
+----
+
+and then some images like ![Alt text](http://images.wikia.com/disney/images/0/00/Captain_Hook.png)
+
+This is [an example](http://example.com/ "Title") inline link.
+
+[This link](http://example.net/) has no title attribute.
+
+And then there is a [link like this][1] that has used reference notation
+
+[1]: http://reference.notation.com
+
+
+    </textarea>
+    <button onclick="convertFunc()">Convert</button>
+    <div id="testarea">
+        
+    </div>
+    
+</body>
+</html>

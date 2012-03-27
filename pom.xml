@@ -26,6 +26,7 @@
     <modules>
         <module>atlassian-markdown-core</module>
         <module>atlassian-jira-markdown-plugin</module>
+        <module>atlassian-confluence-markdown-plugin</module>
     </modules>
 
     <scm>
