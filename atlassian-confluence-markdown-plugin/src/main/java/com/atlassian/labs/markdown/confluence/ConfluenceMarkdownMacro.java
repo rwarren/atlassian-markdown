@@ -1,6 +1,8 @@
 package com.atlassian.labs.markdown.confluence;
 
 import com.atlassian.confluence.util.GeneralUtil;
+import com.atlassian.labs.markdown.MarkdownSanitizer;
+import com.atlassian.labs.markdown.PageDownMarkdown;
 import com.atlassian.renderer.RenderContext;
 import com.atlassian.renderer.v2.RenderMode;
 import com.atlassian.renderer.v2.macro.BaseMacro;
@@ -28,9 +30,7 @@ public class ConfluenceMarkdownMacro extends BaseMacro
     @Override
     public String execute(Map parameters, String body, RenderContext renderContext) throws MacroException
     {
-        return "<div>" +
-                "<h2>This would be markdown generated</h2>" +
-                "<pre><code>" + GeneralUtil.escapeXml(body) + "</code></pre>" +
-                "</div>";
+        String markdown = new PageDownMarkdown().markdown(body);
+        return MarkdownSanitizer.sanitizeHtml(markdown);
     }
 }

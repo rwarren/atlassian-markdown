@@ -23,7 +23,6 @@ public class ConfluenceMarkdownXhtmlMacro implements Macro
     }
 
     @Override
-    @RequiresFormat(Format.Storage)
     public String execute(Map<String, String> parameters, String body, ConversionContext context) throws MacroExecutionException
     {
         try
