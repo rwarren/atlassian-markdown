@@ -1,6 +1,7 @@
 package com.atlassian.labs.markdown.jira;
 
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.RendererManager;
 import com.atlassian.jira.issue.fields.renderer.IssueRenderContext;
 import com.atlassian.jira.issue.fields.renderer.wiki.AtlassianWikiRenderer;
 import com.atlassian.renderer.RenderContext;
@@ -15,6 +16,14 @@ import java.util.Map;
  */
 public class JiraMarkdownMacro extends BaseMacro
 {
+
+    private final RendererManager rendererManager;
+
+    public JiraMarkdownMacro(RendererManager rendererManager)
+    {
+        this.rendererManager = rendererManager;
+    }
+
     public boolean isInline()
     {
         return true;
@@ -32,7 +41,7 @@ public class JiraMarkdownMacro extends BaseMacro
 
     public String execute(Map map, String body, RenderContext renderContext) throws MacroException
     {
-        return new JiraMarkdownProcessor().markdown(body, buildIssueRenderContext(renderContext));
+        return new JiraMarkdownProcessor(rendererManager).markdown(body, buildIssueRenderContext(renderContext));
     }
 
     private IssueRenderContext buildIssueRenderContext(RenderContext renderContext)

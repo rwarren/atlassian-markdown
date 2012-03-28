@@ -1,5 +1,4 @@
-(function ()
-{
+(function() {
     /**
      * This top level method instantiates a new shared secret per run and then invokes markdown with it
      *
@@ -7,6 +6,9 @@
      */
     Markdown.getSharedSecretConverter = function ()
     {
+        if (typeof javaHtmlGeneration == 'undefined') {
+            javaHtmlGeneration = false;
+        }
         /*
          This invoker script wraps up the PageDown code into something that can be more easily invoked from Java.  It was of course
          never part of the standard PageDown code base.
@@ -27,6 +29,9 @@
 
         converter.hooks.set("generateImageHTML", function (obj)
         {
+            if (javaHtmlGeneration) {
+                return javaHtmlGeneration.generateImageHTML(sharedSecret, obj.url,obj.alt_text,obj.title);
+            }
             return '<img' +
                     toAttr('src', obj.url) +
                     toAttr('alt', obj.alt_text) +
@@ -37,6 +42,9 @@
         });
         converter.hooks.set("generateLinkHTML", function (obj)
         {
+            if (javaHtmlGeneration) {
+                return javaHtmlGeneration.generateLinkHTML(sharedSecret, obj.url,obj.title, obj.link_text);
+            }
             return '<a' +
                     toAttr('href', obj.url) +
                     toAttr('title', obj.title) +
@@ -64,9 +72,9 @@
 
 
         return converter;
-    };
+   };
 
-})
-();
+})();
 
+// the java support requires that the last object evaluated is what is accessible to be called.
 Markdown.getSharedSecretConverter();

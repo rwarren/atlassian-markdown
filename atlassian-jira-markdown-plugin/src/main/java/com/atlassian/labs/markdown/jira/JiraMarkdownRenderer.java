@@ -1,5 +1,6 @@
 package com.atlassian.labs.markdown.jira;
 
+import com.atlassian.jira.issue.RendererManager;
 import com.atlassian.jira.issue.fields.renderer.IssueRenderContext;
 import com.atlassian.jira.issue.fields.renderer.JiraRendererPlugin;
 import com.atlassian.jira.plugin.renderer.JiraRendererModuleDescriptor;
@@ -13,9 +14,16 @@ public class JiraMarkdownRenderer implements JiraRendererPlugin
 
     private JiraRendererModuleDescriptor jiraRendererModuleDescriptor;
 
+    private final RendererManager rendererManager;
+
+    public JiraMarkdownRenderer(RendererManager rendererManager)
+    {
+        this.rendererManager = rendererManager;
+    }
+
     public String render(String value, IssueRenderContext context)
     {
-        return new JiraMarkdownProcessor().markdown(value, context);
+        return new JiraMarkdownProcessor(rendererManager).markdown(value, context);
     }
 
     public String renderAsText(String value, IssueRenderContext context)

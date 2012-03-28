@@ -5,6 +5,7 @@ import com.atlassian.jira.issue.RendererManager;
 import com.atlassian.jira.issue.fields.renderer.IssueRenderContext;
 import com.atlassian.jira.issue.fields.renderer.wiki.AtlassianWikiRenderer;
 import com.atlassian.jira.util.JiraKeyUtils;
+import com.atlassian.labs.markdown.MarkdownHtmlGeneration;
 import com.atlassian.labs.markdown.PageDownMarkdown;
 
 import java.util.regex.Matcher;
@@ -15,10 +16,19 @@ import java.util.regex.Pattern;
  */
 public class JiraMarkdownProcessor
 {
+    private final RendererManager rendererManager;
+
+    public JiraMarkdownProcessor(RendererManager rendererManager)
+    {
+        this.rendererManager = rendererManager;
+    }
+
     public String markdown(final String text, final IssueRenderContext issueRenderContext)
     {
-        // PageDown invocation
-        String markdown = new PageDownMarkdown().markdown(text);
+        final JiraMarkdownHtmlGeneration markdownHtmlGeneration = new JiraMarkdownHtmlGeneration(rendererManager, issueRenderContext);
+        final PageDownMarkdown pageDownMarkdown = new PageDownMarkdown(markdownHtmlGeneration);
+
+        String markdown = pageDownMarkdown.markdown(text);
 
         markdown = JiraKeyUtils.linkBugKeys(markdown);
         markdown = replaceMentionsWithNames(markdown, issueRenderContext);
@@ -56,7 +66,7 @@ public class JiraMarkdownProcessor
     {
         // in order to get full user profile link rendering we end up using the wiki render to turn [~xxxxx] into a user profile link
         // freaky eh?  wiki in markup inside wiki?
-        String wikiLink = ComponentAccessor.getComponent(RendererManager.class).getRendererForType(AtlassianWikiRenderer.RENDERER_TYPE).render(markup, issueRenderContext);
+        String wikiLink = rendererManager.getRendererForType(AtlassianWikiRenderer.RENDERER_TYPE).render(markup, issueRenderContext);
         sb.append(wikiLink);
     }
 }

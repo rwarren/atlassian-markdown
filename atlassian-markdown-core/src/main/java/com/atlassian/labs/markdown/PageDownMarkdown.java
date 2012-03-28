@@ -10,6 +10,17 @@ import java.io.*;
  */
 public class PageDownMarkdown
 {
+    private final MarkdownHtmlGeneration markdownHtmlGeneration;
+
+    public PageDownMarkdown(MarkdownHtmlGeneration markdownHtmlGeneration)
+    {
+        this.markdownHtmlGeneration = markdownHtmlGeneration;
+    }
+
+    public PageDownMarkdown()
+    {
+        this.markdownHtmlGeneration = null;
+    }
 
     public String markdown(final String markdownText)
     {
@@ -19,7 +30,10 @@ public class PageDownMarkdown
         try
         {
             final Bindings bindings = new SimpleBindings();
+            bindings.put("javaHtmlGeneration", markdownHtmlGeneration);
+
             String js = getPageDownJS();
+
             Object pageDownConverter = engine.eval(js, bindings);
             return invocableEngine.invokeMethod(pageDownConverter, "makeHtml", markdownText) + "";
         }
