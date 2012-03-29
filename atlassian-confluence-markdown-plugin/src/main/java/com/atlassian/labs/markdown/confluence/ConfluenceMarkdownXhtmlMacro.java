@@ -5,6 +5,7 @@ import com.atlassian.confluence.content.render.xhtml.macro.annotation.Format;
 import com.atlassian.confluence.content.render.xhtml.macro.annotation.RequiresFormat;
 import com.atlassian.confluence.macro.Macro;
 import com.atlassian.confluence.macro.MacroExecutionException;
+import com.atlassian.labs.markdown.PageDownMarkdown;
 import com.atlassian.renderer.v2.macro.MacroException;
 
 import java.util.Map;
@@ -15,24 +16,15 @@ import java.util.Map;
 public class ConfluenceMarkdownXhtmlMacro implements Macro
 {
 
-    private final ConfluenceMarkdownMacro oldMarkdownMacro;
-
     public ConfluenceMarkdownXhtmlMacro()
     {
-        oldMarkdownMacro = new ConfluenceMarkdownMacro();
     }
 
     @Override
     public String execute(Map<String, String> parameters, String body, ConversionContext context) throws MacroExecutionException
     {
-        try
-        {
-            return oldMarkdownMacro.execute(parameters, body, context != null ? context.getPageContext() : null);
-        }
-        catch (MacroException e)
-        {
-            throw new MacroExecutionException(e);
-        }
+        String markdown = new PageDownMarkdown().markdown(body);
+        return markdown;
     }
 
     @Override

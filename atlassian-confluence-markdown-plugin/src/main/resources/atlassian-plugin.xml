@@ -16,23 +16,6 @@
         <param name="content-type" value="image/png"/>
     </resource>
 
-    <macro key="atlassian.markdown.macro"
-           name="markdown"
-           class="com.atlassian.labs.markdown.confluence.ConfluenceMarkdownMacro">
-
-        <description>This macro allows Markdown inside Confluence</description>
-
-        <!-- Provides help text for the Confluence notation guide. -->
-        <resource type="velocity" name="help" location="templates/markdown-macro-help.vm">
-            <param name="help-section" value="confluence"/>
-        </resource>
-
-        <!-- Specifies which macro browser category this macro should display in. -->
-        <category name="confluence-content"/>
-
-        <parameters/>
-    </macro>
-
     <xhtml-macro key="atlassian.markdown.macro.xhtml"
                  name="markdown-xhtml"
                  documentation-url="help.markdown.macro"
