@@ -1,16 +1,19 @@
 <html>
 <head>
     <script type="text/javascript"
+            src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+
+    <script type="text/javascript"
             src="../../../../../../../src/main/resources/pagedown/js/Markdown.Converter.js"></script>
     <script type="text/javascript"
             src="../../../../../../../src/main/resources/pagedown/js/Markdown.Sanitizer.js"></script>
     <script type="text/javascript"
             src="../../../../../../../src/main/resources/pagedown/js/Markdown.SharedSecret.js"></script>
 
+
     <script>
         // Testing in a browser gives us a debugger so we can work out whats going on?
-        convertFunc = function ()
-        {
+        convertFunc = function () {
 
             converter = Markdown.getSharedSecretConverter();
 
@@ -18,13 +21,55 @@
             var testarea = document.getElementById('testarea');
 
             testarea.innerHTML = converter.makeHtml(markdownText.value);
-        }
+
+        };
+
+        $(function () {
+
+
+            $('#convertButton').bind('click', function() {
+                convertFunc();
+            });
+
+            var asItypeFunc = function () {
+                if ($("#asitype:checked").length > 0) {
+                    window.setTimeout(convertFunc,0);
+                }
+            };
+            $('#markdownText').bind('keypress', asItypeFunc);
+            $('#markdownText').bind('keydown', asItypeFunc);
+        })
 
     </script>
 </head>
 <body onload="convertFunc()">
-    <p>Testing Markdown library</p>
-    <textarea id="markdownText" rows="15" cols="200">
+<p>Testing Markdown library</p>
+<textarea id="markdownText" rows="15" cols="200">
+
+term
+ : definithion
+
+Table
+-----------------
+
+|a |b |c
+|--|--|--
+|1 |2 |3
+
+or
+
+a |b |c
+--|--|--
+1 |2 |3
+
+alignment
+
+  rigt|left  | center
+-----:|:-----|------
+ 0001 | 2    | 003
+   4  | 0005 |  6
+
+
 A First Level Header
 ====================
 
@@ -34,16 +79,16 @@ And this comes to the second level
 Here
 ----
 
-        public String markdown(final String text, final IssueRenderContext issueRenderContext)
-        {
-            // PageDown invocation
-            String markdown = new PageDownMarkdown().markdown(text);
+    public String markdown(final String text, final IssueRenderContext issueRenderContext)
+    {
+    // PageDown invocation
+    String markdown = new PageDownMarkdown().markdown(text);
 
-            markdown = JiraKeyUtils.linkBugKeys(markdown);
-            markdown = replaceMentionsWithNames(markdown, issueRenderContext);
+    markdown = JiraKeyUtils.linkBugKeys(markdown);
+    markdown = replaceMentionsWithNames(markdown, issueRenderContext);
 
-            return markdown;
-        }
+    return markdown;
+    }
 
 and then some images like ![Alt text](http://images.wikia.com/disney/images/0/00/Captain_Hook.png)
 
@@ -55,11 +100,16 @@ And then there is a [link like this][1] that has used reference notation
 
 [1]: http://reference.notation.com
 
+</textarea>
+<input type="checkbox" id="asitype" checked="checked"/>
+<button id="convertButton">Convert</button>
 
-    </textarea>
-    <button onclick="convertFunc()">Convert</button>
-    <div id="testarea">
-    </div>
+<div>
+    Generated Markdown Below
+</div>
+<hr/>
+<div id="testarea">
+</div>
 
 </body>
 </html>

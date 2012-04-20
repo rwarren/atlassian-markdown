@@ -128,6 +128,30 @@ else
         // (see _ProcessListItems() for details):
         var g_list_level;
 
+        var md_tab_width = 4;
+        var md_less_than_tab = md_tab_width - 1;
+
+        var String_trim = function(target, charlist) {
+            var chars = charlist || " \t\n\r";
+            return target.replace(
+                new RegExp("^[" + chars + "]*|[" + chars + "]*$", "g"), ""
+            );
+        };
+
+        var String_rtrim = function (target, charlist) {
+            var chars = charlist || " \t\n\r";
+            return target.replace(
+                new RegExp("[" + chars + "]*$", "g"), ""
+            );
+        };
+
+
+        var Array_pad = function (target, size, value) {
+            while (target.length < size) {
+                target.push(value);
+            }
+        };
+
         this.makeHtml = function (text) {
 
             //
@@ -393,6 +417,7 @@ else
             // tags like paragraphs, headers, and list items.
             //
             text = _DoHeaders(text);
+            text = _DoTables(text);
 
             // Do Horizontal Rules:
             var replacement = "<hr />\n";
@@ -401,6 +426,7 @@ else
             text = text.replace(/^[ ]{0,2}([ ]?_[ ]?){3,}[ \t]*$/gm, replacement);
 
             text = _DoLists(text);
+            text = _DoDefLists(text);
             text = _DoCodeBlocks(text);
             text = _DoBlockQuotes(text);
 
@@ -956,6 +982,210 @@ else
             g_list_level--;
             return list_str;
         }
+
+        var md_flag_DoTables = "9882b282ede0f5af55034471410cfc46";
+        var md_reg_DoTables1 = new RegExp(
+            '^'
+                + '[ ]{0,' + md_less_than_tab + '}'
+                + '[|]'
+                + '(.+)\\n'
+                + '[ ]{0,' + md_less_than_tab + '}'
+                + '[|]([ ]*[-:]+[-| :]*)\\n'
+                + '('
+                + '(?:'
+                + '[ ]*'
+                + '[|].*\\n'
+                + ')*'
+                + ')'
+                + '(?=\\n|' + md_flag_DoTables + ')'//Stop at final double newline.
+            , "gm");
+        var md_reg_DoTables2 = new RegExp(
+            '^'
+                + '[ ]{0,' + md_less_than_tab + '}'
+                + '(\\S.*[|].*)\\n'
+                + '[ ]{0,' + md_less_than_tab + '}'
+                + '([-:]+[ ]*[|][-| :]*)\\n'
+                + '('
+                + '(?:'
+                + '.*[|].*\\n'
+                + ')*'
+                + ')'
+                + '(?=\\n|' + md_flag_DoTables + ')'
+            , "gm");
+
+        function _DoTables(text) {
+
+            text += md_flag_DoTables;
+
+            text = text.replace(md_reg_DoTables1, function ($0, $1, $2, $3) {
+                $3 = $3.replace(/^[ ]*[|]/gm, '');
+                return _DoTable_callback($0, $1, $2, $3);
+            });
+
+            text = text.replace(md_flag_DoTables, "");
+
+            text += md_flag_DoTables;
+
+            text = text.replace(md_reg_DoTables2, _DoTable_callback);
+
+            text = text.replace(md_flag_DoTables, "");
+
+            return text;
+        }
+
+        function _DoTable_callback($0, $1, $2, $3) {
+            var head = $1;
+            var underline = $2;
+            var content = $3;
+
+            head = head.replace(/[|][ ]*$/gm, '');
+            underline = underline.replace(/[|][ ]*$/gm, '');
+            content = content.replace(/[|][ ]*$/gm, '');
+
+            var separators = underline.split(/[ ]*[|][ ]*/);
+
+            var attr = new Array();
+
+            for (i = 0, len = separators.length; i < len; i++) {
+                var separator = separators[i];
+                if (separator.match(/^[ ]*-+:[ ]*$/)) attr.push(' align="right"');
+                else if (separator.match(/^[ ]*:-+:[ ]*$/)) attr.push(' align="center"');
+                else if (separator.match(/^[ ]*:-+[ ]*$/)) attr.push(' align="left"');
+                else attr.push('');
+            }
+
+            head = _DoCodeSpans(head);
+
+            var headers = head.split(/[ ]*[|][ ]*/);
+            var col_count = headers.length;
+
+            var text = "<table>\n";
+            text += "<thead>\n";
+            text += "<tr>\n";
+
+            for (i = 0, len = headers.length; i < len; i++)
+                text += "  <th" + attr[i] + ">" + _RunSpanGamut(String_trim(headers[i])) + "</th>\n";
+
+            text += "</tr>\n";
+            text += "</thead>\n";
+
+            var rows = String_trim(content, "\n").split(/\n/);
+
+            text += "<tbody>\n";
+
+            for (i = 0, len = rows.length; i < len; i++) {
+                var row = rows[i];
+
+                row = _DoCodeSpans(row);
+                var row_cells = row.split(/[ ]*[|][ ]*/, col_count);
+                Array_pad(row_cells, col_count, "");
+
+                text += "<tr>\n";
+                for (var x = 0, len2 = row_cells.length; x < len2; x++)
+                    text += "  <td" + attr[x] + ">" + _RunSpanGamut(String_trim(row_cells[x])) + "</td>\n";
+
+                text += "</tr>\n";
+            }
+            text += "</tbody>\n</table>";
+
+            return text + "\n";
+        }
+
+
+        var md_reg_DoDefLists = new RegExp(
+            '(?:(\\n\\n)|^\\n?)'
+                + '('
+                + '('
+                + '[ ]{0,' + md_less_than_tab + '}'
+                + '((\\S.*\\n)+)'
+                + '\\n?'
+                + '[ ]{0,' + md_less_than_tab + '}:[ ]+'
+                + ')'
+                + '(?:[\\s\\S]+?)'
+                + '('
+                + '$'
+                + '|'
+                + '\\n{2,}'
+                + '(?=\\S)'
+                + '(?!'
+                + '[ ]{0,' + md_less_than_tab + '}'
+                + '(?:\\S.*\\n)+?'
+                + '\\n?'
+                + '[ ]{0,' + md_less_than_tab + '}:[ ]+'
+                + ')'
+                + '(?!'
+                + '[ ]{0,' + md_less_than_tab + '}:[ ]+'
+                + ')'
+                + ')'
+                + ')'
+            , "g");
+
+        function _DoDefLists(text) {
+
+            text = text.replace(md_reg_DoDefLists, function ($0, $1, $2, $3, $4, $5) {
+                var result = String_trim(_ProcessDefListItems($2));
+                result = "<dl>\n" + result + "\n</dl>";
+                if (!$1) $1 = "";
+                return $1 + result + "\n\n";
+            });
+
+            return text;
+        }
+
+        var md_reg_ProcessDefListItems1 = new RegExp(
+            '(?:\\n\\n+|^\\n?)'
+                + '('
+                + '[ ]{0,' + md_less_than_tab + '}'
+                + '(?![:][ ]|[ ])'
+                + '(?:\\S.*\\n)+?'
+                + ')'
+                + '(?=\\n?[ ]{0,3}:[ ])'
+            , "g");
+        var md_reg_ProcessDefListItems2 = new RegExp(
+            '\\n(\\n+)?'
+                + '[ ]{0,' + md_less_than_tab + '}'
+                + '[:][ ]+'
+                + '([\\s\\S]+?)'
+                + '(?=\\n+'
+                + '(?:'
+                + '[ ]{0,' + md_less_than_tab + '}[:][ ]|<dt>|$'
+                + ')'
+                + ')'
+            , "g");
+
+        function _ProcessDefListItems(list_str) {
+
+            list_str = list_str.replace(/\n{2,}$/, "\n");
+
+            list_str = list_str.replace(md_reg_ProcessDefListItems1, function ($0, $1) {
+                var terms = String_trim($1).split(/\n/);
+                var text = '';
+                for (var i = 0, len = terms.length; i < len; i++) {
+                    var term = terms[i];
+                    term = _RunSpanGamut(String_trim(term));
+                    text += "\n<dt>" + term + "</dt>";
+                }
+                return text + "\n";
+            });
+
+            list_str = list_str.replace(md_reg_ProcessDefListItems2, function ($0, $1, $2) {
+                var def = $2;
+
+                if ($1 || def.match(/\n{2,}/)) {
+                    def = _RunBlockGamut(_Outdent(def + "\n\n"));
+                    def = "\n" + def + "\n";
+                }
+                else {
+                    def = String_rtrim(def);
+                    def = _RunSpanGamut(_Outdent(def));
+                }
+
+                return "\n<dd>" + def + "</dd>\n";
+            });
+
+            return list_str;
+        }
+
 
         function _DoCodeBlocks(text) {
             //
