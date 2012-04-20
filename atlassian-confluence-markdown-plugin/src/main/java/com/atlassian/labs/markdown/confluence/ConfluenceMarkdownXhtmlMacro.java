@@ -1,12 +1,11 @@
 package com.atlassian.labs.markdown.confluence;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
-import com.atlassian.confluence.content.render.xhtml.macro.annotation.Format;
-import com.atlassian.confluence.content.render.xhtml.macro.annotation.RequiresFormat;
 import com.atlassian.confluence.macro.Macro;
 import com.atlassian.confluence.macro.MacroExecutionException;
+import com.atlassian.confluence.xhtml.api.XhtmlContent;
+import com.atlassian.labs.markdown.MarkdownHtmlGeneration;
 import com.atlassian.labs.markdown.PageDownMarkdown;
-import com.atlassian.renderer.v2.macro.MacroException;
 
 import java.util.Map;
 
@@ -16,14 +15,18 @@ import java.util.Map;
 public class ConfluenceMarkdownXhtmlMacro implements Macro
 {
 
-    public ConfluenceMarkdownXhtmlMacro()
+    private final XhtmlContent xhtmlContent;
+
+    public ConfluenceMarkdownXhtmlMacro(XhtmlContent xhtmlContent)
     {
+        this.xhtmlContent = xhtmlContent;
     }
 
     @Override
     public String execute(Map<String, String> parameters, String body, ConversionContext context) throws MacroExecutionException
     {
-        String markdown = new PageDownMarkdown().markdown(body);
+        MarkdownHtmlGeneration confluenceMarkdownHtmlGeneration = new ConfluenceMarkdownHtmlGeneration(xhtmlContent, context);
+        String markdown = new PageDownMarkdown(confluenceMarkdownHtmlGeneration).markdown(body);
         return markdown;
     }
 
