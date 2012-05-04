@@ -30,7 +30,11 @@ public class JiraMarkdownProcessor
 
         String markdown = pageDownMarkdown.markdown(text);
 
-        markdown = JiraKeyUtils.linkBugKeys(markdown);
+        //
+        // this is too unreliable.  It looks for :// somewhere and we dont always have that
+        // so for now we avoid it.  It would be cool though
+        //
+        //markdown = JiraKeyUtils.linkBugKeys(markdown);
         markdown = replaceMentionsWithNames(markdown, issueRenderContext);
 
         return markdown;
