@@ -1219,7 +1219,7 @@ else
                     var preCode = text.substring(0,startMatch.index);
                     var postCode = text.substring(md_regPHPFencedBlocks.lastIndex);
 
-                    text = preCode + codeBlock + postCode;
+                    text = preCode + hashBlock(codeBlock) + postCode;
 
                 } else {
                     break;
