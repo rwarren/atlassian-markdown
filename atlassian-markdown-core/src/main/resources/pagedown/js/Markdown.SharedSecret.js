@@ -67,7 +67,7 @@
             return '<code' +
                     toAttr('class', 'prettyprint') +
                     toAttr('data-shared-secret', sharedSecret) +
-                    '>' + obj.codeblock + '</code>';
+                    '>' + obj.codespan + '</code>';
         });
 
 

@@ -35,6 +35,10 @@ else
 // and line endings.
 //
 
+//
+// BB : I have since added extras to allow callback into java land and also some PHP extras
+// support that I have ported.
+//
 
 //
 // Usage:
@@ -174,16 +178,16 @@ else
 
             text = pluginHooks.preConversion(text);
 
-            // attacklab: Replace ~ with ~T
-            // This lets us use tilde as an escape char to avoid md5 hashes
+            // attacklab: Replace @ with @T
+            // This lets us use At as an escape char to avoid md5 hashes
             // The choice of character is arbitray; anything that isn't
             // magic in Markdown will work.
-            text = text.replace(/~/g, "~T");
+            text = text.replace(/@/g, "@T");
 
-            // attacklab: Replace $ with ~D
+            // attacklab: Replace $ with @D
             // RegExp interprets $ as a special character
             // when it's in a replacement string
-            text = text.replace(/\$/g, "~D");
+            text = text.replace(/\$/g, "@D");
 
             // Standardize line endings
             text = text.replace(/\r\n/g, "\n"); // DOS to Unix
@@ -212,10 +216,10 @@ else
             text = _UnescapeSpecialChars(text);
 
             // attacklab: Restore dollar signs
-            text = text.replace(/~D/g, "$$");
+            text = text.replace(/@D/g, "$$");
 
             // attacklab: Restore tildes
-            text = text.replace(/~T/g, "~");
+            text = text.replace(/@T/g, "@");
 
             text = pluginHooks.postConversion(text);
 
@@ -405,8 +409,8 @@ else
             // strip trailing blank lines
             blockText = blockText.replace(/\n+$/g, "");
 
-            // Replace the element text with a marker ("~KxK" where x is its key)
-            blockText = "\n\n~K" + (g_html_blocks.push(blockText) - 1) + "K\n\n";
+            // Replace the element text with a marker ("@KxK" where x is its key)
+            blockText = "\n\n@K" + (g_html_blocks.push(blockText) - 1) + "K\n\n";
 
             return blockText;
         }
@@ -427,6 +431,7 @@ else
 
             text = _DoLists(text);
             text = _DoDefLists(text);
+            text = _DoFencedCodeBlocks(text);
             text = _DoCodeBlocks(text);
             text = _DoBlockQuotes(text);
 
@@ -460,7 +465,7 @@ else
             // delimiters in inline links like [this](<url>).
             text = _DoAutoLinks(text);
             
-            text = text.replace(/~P/g, "://"); // put in place to prevent autolinking; reset now
+            text = text.replace(/@P/g, "://"); // put in place to prevent autolinking; reset now
             
             text = _EncodeAmpsAndAngles(text);
             text = _DoItalicsAndBold(text);
@@ -590,7 +595,7 @@ else
         function writeAnchorTag(wholeMatch, m1, m2, m3, m4, m5, m6, m7) {
             if (m7 == undefined) m7 = "";
             var whole_match = m1;
-            var link_text = m2.replace(/:\/\//g, "~P"); // to prevent auto-linking withing the link. will be converted back after the auto-linker runs
+            var link_text = m2.replace(/:\/\//g, "@P"); // to prevent auto-linking withing the link. will be converted back after the auto-linker runs
             var link_id = m3.toLowerCase();
             var url = m4;
             var title = m7;
@@ -827,7 +832,7 @@ else
 
             // attacklab: add sentinel to hack around khtml/safari bug:
             // http://bugs.webkit.org/show_bug.cgi?id=11231
-            text += "~0";
+            text += "@0";
 
             // Re-usable pattern to match any entirel ul or ol list:
 
@@ -841,7 +846,7 @@ else
                     )
                     [^\r]+?
                     (                               // $4
-                        ~0                          // sentinel for workaround; should be $
+                        @0                          // sentinel for workaround; should be $
                         |
                         \n{2,}
                         (?=\S)
@@ -853,7 +858,7 @@ else
                 )
             /g
             */
-            var whole_list = /^(([ ]{0,3}([*+-]|\d+[.])[ \t]+)[^\r]+?(~0|\n{2,}(?=\S)(?![ \t]*(?:[*+-]|\d+[.])[ \t]+)))/gm;
+            var whole_list = /^(([ ]{0,3}([*+-]|\d+[.])[ \t]+)[^\r]+?(@0|\n{2,}(?=\S)(?![ \t]*(?:[*+-]|\d+[.])[ \t]+)))/gm;
 
             if (g_list_level) {
                 text = text.replace(whole_list, function (wholeMatch, m1, m2) {
@@ -871,7 +876,7 @@ else
                     return result;
                 });
             } else {
-                whole_list = /(\n\n|^\n?)(([ ]{0,3}([*+-]|\d+[.])[ \t]+)[^\r]+?(~0|\n{2,}(?=\S)(?![ \t]*(?:[*+-]|\d+[.])[ \t]+)))/g;
+                whole_list = /(\n\n|^\n?)(([ ]{0,3}([*+-]|\d+[.])[ \t]+)[^\r]+?(@0|\n{2,}(?=\S)(?![ \t]*(?:[*+-]|\d+[.])[ \t]+)))/g;
                 text = text.replace(whole_list, function (wholeMatch, m1, m2, m3) {
                     var runup = m1;
                     var list = m2;
@@ -884,7 +889,7 @@ else
             }
 
             // attacklab: strip sentinel
-            text = text.replace(/~0/, "");
+            text = text.replace(/@0/, "");
 
             return text;
         }
@@ -925,7 +930,7 @@ else
             list_str = list_str.replace(/\n{2,}$/, "\n");
 
             // attacklab: add sentinel to emulate \z
-            list_str += "~0";
+            list_str += "@0";
 
             // In the original attacklab showdown, list_type was not given to this function, and anything
             // that matched /[*+-]|\d+[.]/ would just create the next <li>, causing this mismatch:
@@ -947,13 +952,13 @@ else
                     (\n+)
                 )
                 (?=
-                    (~0 | \2 ({MARKER}) [ \t]+)
+                    (@0 | \2 ({MARKER}) [ \t]+)
                 )
             /gm, function(){...});
             */
 
             var marker = _listItemMarkers[list_type];
-            var re = new RegExp("(^[ \\t]*)(" + marker + ")[ \\t]+([^\\r]+?(\\n+))(?=(~0|\\1(" + marker + ")[ \\t]+))", "gm");
+            var re = new RegExp("(^[ \\t]*)(" + marker + ")[ \\t]+([^\\r]+?(\\n+))(?=(@0|\\1(" + marker + ")[ \\t]+))", "gm");
             var last_item_had_a_double_newline = false;
             list_str = list_str.replace(re,
                 function (wholeMatch, m1, m2, m3) {
@@ -977,7 +982,7 @@ else
             );
 
             // attacklab: strip sentinel
-            list_str = list_str.replace(/~0/g, "");
+            list_str = list_str.replace(/@0/g, "");
 
             g_list_level--;
             return list_str;
@@ -1187,9 +1192,71 @@ else
         }
 
 
+        // BB : port of PHP code but instead of wicked RegExp we use (wait for it) procedural code
+        // uses ``` for GHF markdown and ~~~ for PHP extras markdown
+        function _DoFencedCodeBlocks(text) {
+
+            text += "@0";
+
+            while (true) {
+                var md_regPHPFencedBlocks = /(?:\n|^)((`{3,}|~{3,})[ ]*\n)/gm;
+
+                var startMatch = md_regPHPFencedBlocks.exec(text);
+                if (startMatch != null)
+                {
+                    var startIndex = md_regPHPFencedBlocks.lastIndex;
+
+                    var endMatch = md_regPHPFencedBlocks.exec(text);
+                    if (! endMatch) {
+                        break;
+                    }
+                    // we have a pair
+                    var endIndex = endMatch.index;
+                    var code = text.substring(startIndex, endIndex);
+
+                    var codeBlock = _generateCodeBlock(false, code,"");
+
+                    var preCode = text.substring(0,startMatch.index);
+                    var postCode = text.substring(md_regPHPFencedBlocks.lastIndex);
+
+                    text = preCode + codeBlock + postCode;
+
+                } else {
+                    break;
+                }
+            }
+            text = text.replace(/@0/, "");
+
+            return text;
+        }
+
+
+        var _generateCodeBlock = function(indented, codeblock, nextChar)
+        {
+            if (indented) {
+                codeblock = _Outdent(codeblock);
+            }
+            codeblock = _EncodeCode(codeblock);
+            codeblock = _Detab(codeblock);
+
+            if (indented) {
+                codeblock = codeblock.replace(/^\n+/g, ""); // trim leading newlines
+                codeblock = codeblock.replace(/\n+$/g, ""); // trim trailing whitespace
+            }
+
+            var result = pluginHooks.generateCodeBlockHTML({
+                codeblock : codeblock
+            });
+            if (! result) {
+                result = '<pre><code>' + codeblock + '\n</code></pre>';
+            }
+
+            return "\n\n" + result + "\n\n" + nextChar;
+        }
+
         function _DoCodeBlocks(text) {
             //
-            //  Process Markdown `<pre><code>` blocks.
+            //  Process Markdown `<pre><code>` blocks.  These are indented as tabs or 4 spaces
             //  
 
             /*
@@ -1201,43 +1268,32 @@ else
                         .*\n+
                     )+
                 )
-                (\n*[ ]{0,3}[^ \t\n]|(?=~0))    // attacklab: g_tab_width
+                (\n*[ ]{0,3}[^ \t\n]|(?=@0))    // attacklab: g_tab_width
             /g ,function(){...});
             */
 
             // attacklab: sentinel workarounds for lack of \A and \Z, safari\khtml bug
-            text += "~0";
+            text += "@0";
 
-            text = text.replace(/(?:\n\n|^)((?:(?:[ ]{4}|\t).*\n+)+)(\n*[ ]{0,3}[^ \t\n]|(?=~0))/g,
+            text = text.replace(/(?:\n\n|^)((?:(?:[ ]{4}|\t).*\n+)+)(\n*[ ]{0,3}[^ \t\n]|(?=@0))/g,
                 function (wholeMatch, m1, m2) {
                     var codeblock = m1;
                     var nextChar = m2;
 
-                    codeblock = _EncodeCode(_Outdent(codeblock));
-                    codeblock = _Detab(codeblock);
-                    codeblock = codeblock.replace(/^\n+/g, ""); // trim leading newlines
-                    codeblock = codeblock.replace(/\n+$/g, ""); // trim trailing whitespace
+                    return _generateCodeBlock(true, codeblock,nextChar);
 
-                    var result = pluginHooks.generateCodeBlockHTML({
-                        codeblock : codeblock
-                    });
-                    if (! result) {
-                        result = '<pre><code>' + codeblock + '\n</code></pre>';
-                    }
-
-                    return "\n\n" + result + "\n\n" + nextChar;
                 }
             );
 
             // attacklab: strip sentinel
-            text = text.replace(/~0/, "");
+            text = text.replace(/@0/, "");
 
             return text;
         }
 
         function hashBlock(text) {
             text = text.replace(/(^\n+|\n+$)/g, "");
-            return "\n\n~K" + (g_html_blocks.push(text) - 1) + "K\n\n";
+            return "\n\n@K" + (g_html_blocks.push(text) - 1) + "K\n\n";
         }
 
         function _DoCodeSpans(text) {
@@ -1285,7 +1341,7 @@ else
                     c = c.replace(/^([ \t]*)/g, ""); // leading whitespace
                     c = c.replace(/[ \t]*$/g, ""); // trailing whitespace
                     c = _EncodeCode(c);
-                    c = c.replace(/:\/\//g, "~P"); // to prevent auto-linking. Not necessary in code *blocks*, but in code spans. Will be converted back after the auto-linker runs.
+                    c = c.replace(/:\/\//g, "@P"); // to prevent auto-linking. Not necessary in code *blocks*, but in code spans. Will be converted back after the auto-linker runs.
 
                     var result = pluginHooks.generateCodeSpanHTML({
                         codespan : c
@@ -1365,10 +1421,10 @@ else
                     // attacklab: hack around Konqueror 3.5.4 bug:
                     // "----------bug".replace(/^-/g,"") == "bug"
 
-                    bq = bq.replace(/^[ \t]*>[ \t]?/gm, "~0"); // trim one level of quoting
+                    bq = bq.replace(/^[ \t]*>[ \t]?/gm, "@0"); // trim one level of quoting
 
                     // attacklab: clean up hack
-                    bq = bq.replace(/~0/g, "");
+                    bq = bq.replace(/@0/g, "");
 
                     bq = bq.replace(/^[ \t]+$/gm, "");     // trim whitespace-only lines
                     bq = _RunBlockGamut(bq);             // recurse
@@ -1380,8 +1436,8 @@ else
                         function (wholeMatch, m1) {
                             var pre = m1;
                             // attacklab: hack around Konqueror 3.5.4 bug:
-                            pre = pre.replace(/^  /mg, "~0");
-                            pre = pre.replace(/~0/g, "");
+                            pre = pre.replace(/^  /mg, "@0");
+                            pre = pre.replace(/@0/g, "");
                             return pre;
                         });
 
@@ -1404,7 +1460,7 @@ else
             var grafs = text.split(/\n{2,}/g);
             var grafsOut = [];
             
-            var markerRe = /~K(\d+)K/;
+            var markerRe = /@K(\d+)K/;
 
             //
             // Wrap <p> tags.
@@ -1434,7 +1490,7 @@ else
                     var foundAny = true;
                     while (foundAny) { // we may need several runs, since the data may be nested
                         foundAny = false;
-                        grafsOut[i] = grafsOut[i].replace(/~K(\d+)K/g, function (wholeMatch, id) {
+                        grafsOut[i] = grafsOut[i].replace(/@K(\d+)K/g, function (wholeMatch, id) {
                             foundAny = true;
                             return g_html_blocks[id];
                         });
@@ -1534,7 +1590,7 @@ else
             //
             // Swap back in all the special characters we've hidden.
             //
-            text = text.replace(/~E(\d+)E/g,
+            text = text.replace(/@E(\d+)E/g,
                 function (wholeMatch, m1) {
                     var charCodeToReplace = parseInt(m1);
                     return String.fromCharCode(charCodeToReplace);
@@ -1551,10 +1607,10 @@ else
             // attacklab: hack around Konqueror 3.5.4 bug:
             // "----------bug".replace(/^-/g,"") == "bug"
 
-            text = text.replace(/^(\t|[ ]{1,4})/gm, "~0"); // attacklab: g_tab_width
+            text = text.replace(/^(\t|[ ]{1,4})/gm, "@0"); // attacklab: g_tab_width
 
             // attacklab: clean up hack
-            text = text.replace(/~0/g, "")
+            text = text.replace(/@0/g, "")
 
             return text;
         }
@@ -1582,7 +1638,7 @@ else
         //  attacklab: Utility functions
         //
 
-        var _problemUrlChars = /(?:["'*()[\]:]|~D)/g;
+        var _problemUrlChars = /(?:["'*()[\]:]|@D)/g;
 
         // hex-encodes some unusual "problem" chars in URLs to avoid URL detection problems 
         function encodeProblemUrlChars(url) {
@@ -1592,7 +1648,7 @@ else
             var len = url.length;
 
             return url.replace(_problemUrlChars, function (match, offset) {
-                if (match == "~D") // escape for dollar
+                if (match == "@D") // escape for dollar
                     return "%24";
                 if (match == ":") {
                     if (offset == len - 1 || /[0-9\/]/.test(url.charAt(offset + 1)))
@@ -1621,7 +1677,7 @@ else
 
         function escapeCharacters_callback(wholeMatch, m1) {
             var charCodeToEscape = m1.charCodeAt(0);
-            return "~E" + charCodeToEscape + "E";
+            return "@E" + charCodeToEscape + "E";
         }
 
     }; // end of the Markdown.Converter constructor
