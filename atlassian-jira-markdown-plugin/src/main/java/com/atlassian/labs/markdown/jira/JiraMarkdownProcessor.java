@@ -7,6 +7,7 @@ import com.atlassian.jira.issue.fields.renderer.wiki.AtlassianWikiRenderer;
 import com.atlassian.jira.util.JiraKeyUtils;
 import com.atlassian.labs.markdown.MarkdownHtmlGeneration;
 import com.atlassian.labs.markdown.PageDownMarkdown;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,6 +26,10 @@ public class JiraMarkdownProcessor
 
     public String markdown(final String text, final IssueRenderContext issueRenderContext)
     {
+        if (StringUtils.isBlank(text))
+        {
+            return text;
+        }
         final JiraMarkdownHtmlGeneration markdownHtmlGeneration = new JiraMarkdownHtmlGeneration(rendererManager, issueRenderContext);
         final PageDownMarkdown pageDownMarkdown = new PageDownMarkdown(markdownHtmlGeneration);
 
