@@ -76,6 +76,10 @@ public class JiraMarkdownProcessor
         // in order to get full user profile link rendering we end up using the wiki render to turn [~xxxxx] into a user profile link
         // freaky eh?  wiki in markup inside wiki?
         String wikiLink = rendererManager.getRendererForType(AtlassianWikiRenderer.RENDERER_TYPE).render(markup, issueRenderContext);
+        // The wiki renderer sees that we are only rendering the name link,
+        // and so it wraps it in paragraph tags which we do not want.
+        wikiLink = wikiLink.replaceAll("<p>", "");
+        wikiLink = wikiLink.replaceAll("</p>", "");
         sb.append(wikiLink);
     }
 }
