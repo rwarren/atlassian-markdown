@@ -5,13 +5,13 @@
     <parent>
         <groupId>com.atlassian.labs</groupId>
         <artifactId>atlassian-markdown</artifactId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.3</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.atlassian.labs</groupId>
     <artifactId>atlassian-markdown-core</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.3</version>
 
     <name>Atlassian Markdown Core</name>
     <description>The core common markdown code.</description>
